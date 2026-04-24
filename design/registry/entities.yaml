@@ -25,144 +25,1227 @@
 #
 # SEARCH PATTERNS (for skills using Grep):
 #   All entity names:        Grep pattern="^  - name:" path="design/registry/entities.yaml"
-#   Specific entity:         Grep pattern="  - name: goblin" path="design/registry/entities.yaml"
+#   Specific entity:         Grep pattern="  - name: combo_hit" path="design/registry/entities.yaml"
 #   All items:               Grep pattern="^  - name:" path="design/registry/entities.yaml" (items section)
-#   What combat.md owns:     Grep pattern="source: design/gdd/combat.md"
+#   What combat.md owns:     Grep pattern="source: design/gdd/combat-system.md"
 #   What inventory.md uses:  Grep pattern="referenced_by.*inventory"
 #   All gold values:          Grep pattern="value_gold:"
 #   Deprecated entries:      Grep pattern="status: deprecated"
 #
 # FORMAT: YAML. Consistent indentation is critical for grep reliability.
 #   Sections: entities | items | formulas | constants
-#   Each entry: name, status, source, referenced_by[], attributes{}, added, revised
+#   Each entry: name, status, source, referenced_by, attributes{}, added, revised
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+# ENTITIES: SIGNALS (cross-system signal contracts)
+# ═══════════════════════════════════════════════════════════════════════════════
 
 version: 1
-last_updated: ""
+last_updated: "2026-04-17"
+notes: "2026-04-17: Added attack_hit signal registration (was missing — animation-system incorrectly listed combat-system as source; corrected to collision-detection-system)."
 
-# ─── ENTITIES ────────────────────────────────────────────────────────────────
-# Named game-world objects: enemies, NPCs, characters, factions, bosses.
-# Register an entity here when it appears in more than one GDD — e.g., an
-# enemy defined in combat.md that also drops items listed in inventory.md.
-#
-# Required fields: name, status, source, referenced_by, added
-# Attribute fields: any key stats that could appear in another GDD
-#   (health, damage, drops, faction, etc.)
+# ─── SIGNALS ───────────────────────────────────────────────────────────────────
+# Cross-system signal definitions. Each signal is a named event that flows
+# from one system (source) to one or more other systems (referenced_by).
 
-entities: []
+signals:
+  - name: combo_hit
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+      - design/gdd/combo-system.md
+      - design/gdd/boss-ai-system.md
+    attributes:
+      params: "(attack_type: String, combo_count: int, is_grounded: bool)"
+      direction: "战斗系统 → Combo连击系统"
+      description: "每次命中时发送，连击系统计算连击窗口和倍率的依据"
+    added: "2026-04-17"
 
-# Example (remove when first real entry is added):
-#
-# entities:
-#   - name: goblin
-#     status: active              # active | deprecated
-#     source: design/gdd/combat.md
-#     referenced_by:
-#       - design/gdd/combat.md
-#       - design/gdd/inventory.md
-#     health: 40
-#     damage: 8
-#     drops:
-#       - item: goblin_arm        # must match an entry in items section
-#         qty: 1
-#         drop_rate: 0.8          # 0.0–1.0
-#     added: 2026-03-26
-#     revised: ""
+  - name: attack_hit
+    status: active
+    source: design/gdd/collision-detection-system.md
+    referenced_by:
+      - design/gdd/collision-detection-system.md
+      - design/gdd/combo-system.md
+      - design/gdd/animation-system.md
+    attributes:
+      params: "(attack_id: String, is_grounded: bool, hit_count: int)"
+      direction: "碰撞检测系统 → Combo连击系统 / 动画系统"
+      description: "命中成立时发送，Combo连击系统计算连击，动画系统触发动画反应"
+    added: "2026-04-17"
+    revised: "2026-04-17"
+    notes: "之前缺失此信号注册；animation-system错误地列在combat-system下，已修正为collision-detection-system。"
 
+  - name: hit_confirmed
+    status: active
+    source: design/gdd/collision-detection-system.md
+    referenced_by:
+      - design/gdd/collision-detection-system.md
+      - design/gdd/combat-system.md
+      - design/gdd/camera-system.md
+    attributes:
+      params: "(hitbox, hurtbox, attack_id)"
+      direction: "碰撞检测系统 → 战斗系统"
+      description: "命中发生时发送，战斗系统计算伤害和应用击退"
+    added: "2026-04-17"
 
-# ─── ITEMS ───────────────────────────────────────────────────────────────────
-# Named collectables, equipment, consumables, crafting materials, currency.
-# Register an item when its name or value appears in more than one GDD.
-#
-# Required fields: name, status, source, referenced_by, added
-# Attribute fields: value_gold, weight, stackable, category, and any stat
-#   modifiers that another system (e.g., economy, crafting) might reference.
+  - name: player_downed
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/camera-system.md
+      - design/gdd/boss-ai-system.md
+      - design/gdd/ui-system.md
+      - design/gdd/animation-system.md
+    attributes:
+      params: "(player_id: int)"
+      direction: "协作系统 → 多系统"
+      description: "玩家倒地进入DOWNTIME状态时发送"
+    added: "2026-04-17"
 
-items: []
+  - name: player_rescued
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/ui-system.md
+      - design/gdd/animation-system.md
+    attributes:
+      params: "(player_id: int, rescuer_color: Color)"
+      direction: "协作系统 → 动画系统/UI系统"
+      description: "救援成功时发送，倒地玩家进入RESCUED状态"
+    added: "2026-04-17"
 
-# Example:
-#
-# items:
-#   - name: goblin_arm
-#     status: active
-#     source: design/gdd/combat.md   # drop defined in combat GDD
-#     referenced_by:
-#       - design/gdd/combat.md
-#       - design/gdd/inventory.md    # inventory GDD lists its weight/stack rules
-#       - design/gdd/economy.md      # economy GDD references its sell price
-#     value_gold: 5
-#     weight: 1
-#     stackable: true
-#     category: crafting_material
-#     added: 2026-03-26
-#     revised: ""
+  - name: sync_window_opened
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/animation-system.md
+    attributes:
+      params: "(player_id: int, partner_id: int)"
+      direction: "Combo连击系统 → 动画系统"
+      description: "同步命中窗口打开时发送，动画系统消费此信号"
+    added: "2026-04-17"
 
+  - name: sync_burst_triggered
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/animation-system.md
+      - design/gdd/particle-vfx-system.md
+      - design/gdd/camera-system.md
+    attributes:
+      params: "(position: Vector2)"
+      direction: "Combo连击系统 → 动画/粒子/相机系统"
+      description: "3+次连续同步命中时触发"
+    added: "2026-04-17"
 
-# ─── FORMULAS ────────────────────────────────────────────────────────────────
+  - name: combo_tier_changed
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/ui-system.md
+      - design/gdd/camera-system.md
+    attributes:
+      params: "(tier: int, player_id: int)"
+      direction: "Combo连击系统 → UI系统/相机系统"
+      description: "连击Tier变化时发送，驱动UI缩放和相机COMBAT_ZOOM"
+    added: "2026-04-17"
+
+  - name: combo_tier_escalated
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/particle-vfx-system.md
+    attributes:
+      params: "(tier: int, player_color: Color)"
+      direction: "Combo连击系统 → 粒子特效系统"
+      description: "连击Tier升级时触发VFX粒子爆发"
+    added: "2026-04-17"
+
+  - name: combo_break
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/ui-system.md
+    attributes:
+      params: "(player_id: int)"
+      direction: "Combo连击系统 → UI系统"
+      description: "连击中断时发送，驱动UI重置动画"
+    added: "2026-04-17"
+
+  - name: player_attacked
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+      - design/gdd/boss-ai-system.md
+    attributes:
+      params: "(boss: Node2D, damage: int)"
+      direction: "战斗系统 → Boss AI系统"
+      description: "通知Boss被攻击，Boss AI据此调整行为"
+    added: "2026-04-17"
+
+  - name: boss_phase_changed
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+      - design/gdd/ui-system.md
+      - design/gdd/camera-system.md
+    attributes:
+      params: "(new_phase: int)"
+      direction: "Boss AI系统 → UI系统/相机系统"
+      description: "Boss阶段转换时发送，驱动血条颜色变化和相机震动"
+    added: "2026-04-17"
+
+  - name: boss_attack_started
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+      - design/gdd/camera-system.md
+    attributes:
+      params: "(attack_pattern: String)"
+      direction: "Boss AI系统 → 相机系统"
+      description: "Boss攻击开始时发送，相机进入BOSS_FOCUS模式"
+    added: "2026-04-17"
+
+  - name: boss_phase_warning
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+      - design/gdd/ui-system.md
+    attributes:
+      params: "(phase: int)"
+      direction: "Boss AI系统 → UI系统"
+      description: "阶段预警时发送，显示攻击提示"
+    added: "2026-04-17"
+
+  - name: boss_attack_telegraph
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+      - design/gdd/ui-system.md
+    attributes:
+      params: "(pattern: String)"
+      direction: "Boss AI系统 → UI系统"
+      description: "Boss攻击提示时发送"
+    added: "2026-04-17"
+
+  - name: crisis_state_changed
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/camera-system.md
+      - design/gdd/ui-system.md
+    attributes:
+      params: "(is_crisis: bool)"
+      direction: "协作系统 → 相机系统/UI系统"
+      description: "CRISIS状态变化时发送（双玩家均低于30%HP）"
+    added: "2026-04-17"
+
+  - name: attack_started
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+      - design/gdd/animation-system.md
+      - design/gdd/camera-system.md
+    attributes:
+      params: "(attack_type: String, player_id: int)"
+      direction: "战斗系统 → 动画系统/相机系统"
+      description: "攻击开始时发送，驱动动画状态机和相机震动"
+    added: "2026-04-17"
+
+  - name: hurt_received
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+      - design/gdd/animation-system.md
+    attributes:
+      params: "(player_id: int)"
+      direction: "战斗系统 → 动画系统"
+      description: "玩家受击时发送，强制动画进入HURT状态"
+    added: "2026-04-17"
+
+  - name: hit_landed
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+      - design/gdd/particle-vfx-system.md
+    attributes:
+      params: "(position: Vector2, attack_type: String)"
+      direction: "战斗系统 → 粒子特效系统"
+      description: "命中发生时发送，触发命中粒子效果"
+    added: "2026-04-17"
+
+  - name: rescue_triggered
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/particle-vfx-system.md
+      - design/gdd/animation-system.md
+    attributes:
+      params: "(position: Vector2, rescuer_color: Color)"
+      direction: "协作系统 → 粒子特效系统/动画系统"
+      description: "救援成功时发送，触发救援粒子和动画"
+    added: "2026-04-17"
+
+  - name: player_out
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/ui-system.md
+    attributes:
+      params: "(player_id: int)"
+      direction: "协作系统 → UI系统"
+      description: "玩家救援窗口超时OUT时发送"
+    added: "2026-04-17"
+
+  - name: player_hurt
+    status: active
+    source: design/gdd/collision-detection-system.md
+    referenced_by:
+      - design/gdd/collision-detection-system.md
+      - design/gdd/boss-ai-system.md
+    attributes:
+      params: "(player: Node2D, damage: float)"
+      direction: "碰撞检测系统 → Boss AI系统"
+      description: "Boss感知到玩家受伤时发送"
+    added: "2026-04-17"
+
+  - name: player_detected
+    status: active
+    source: design/gdd/collision-detection-system.md
+    referenced_by:
+      - design/gdd/collision-detection-system.md
+      - design/gdd/boss-ai-system.md
+    attributes:
+      params: "(player: Node2D)"
+      direction: "碰撞检测系统 → Boss AI系统"
+      description: "Boss检测到玩家时发送"
+    added: "2026-04-17"
+
+  - name: player_lost
+    status: active
+    source: design/gdd/collision-detection-system.md
+    referenced_by:
+      - design/gdd/collision-detection-system.md
+      - design/gdd/boss-ai-system.md
+    attributes:
+      params: "(player: Node2D)"
+      direction: "碰撞检测系统 → Boss AI系统"
+      description: "Boss丢失玩家目标时发送"
+    added: "2026-04-17"
+
+  - name: coop_bonus_active
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/combat-system.md
+    attributes:
+      params: "(multiplier: float)"
+      direction: "协作系统 → 战斗系统"
+      description: "+10%伤害奖励时发送（双玩家均存活）"
+    added: "2026-04-17"
+
+  - name: solo_mode_active
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/combat-system.md
+    attributes:
+      params: "(player_id: int)"
+      direction: "协作系统 → 战斗系统"
+      description: "单人模式时发送，25%伤害减免"
+    added: "2026-04-17"
+
+  - name: combo_multiplier_updated
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/combat-system.md
+    attributes:
+      params: "(multiplier: float, player_id: int)"
+      direction: "Combo连击系统 → 战斗系统"
+      description: "连击倍率更新时发送，战斗系统用于伤害计算"
+    added: "2026-04-17"
+
+  - name: sync_chain_active
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/ui-system.md
+    attributes:
+      params: "(chain_length: int)"
+      direction: "Combo连击系统 → UI系统"
+      description: "同步链激活时发送，UI显示链计数器"
+    added: "2026-04-17"
+
+  - name: combo_tier_audio
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+    attributes:
+      params: "(tier: int)"
+      direction: "Combo连击系统 → (音频系统，待设计)"
+      description: "连击Tier变化时触发音效"
+    added: "2026-04-17"
+
+  - name: crisis_audio_activate
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+    attributes:
+      params: "()"
+      direction: "协作系统 → (音频系统，待设计)"
+      description: "CRISIS状态激活时触发紧迫音乐层"
+    added: "2026-04-17"
+
+# ─── FORMULAS ─────────────────────────────────────────────────────────────────
 # Named calculations with defined variables and output ranges.
-# Register a formula when its output feeds into another system's input,
-# or when another GDD references it by name.
-#
-# Required fields: name, status, source, referenced_by, variables[],
-#   output_range[min, max], added
-# Optional: expression (the actual formula), notes
 
-formulas: []
+formulas:
+  - name: solo_multiplier
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/combat-system.md
+    variables:
+      - combo_count
+    expression: "min(1.0 + combo_count * 0.05, 3.0)"
+    output_range: [1.0, 3.0]
+    output_unit: multiplier
+    notes: "单人连击伤害倍率，上限40连击（3.0x）。战斗系统使用此公式计算final_damage。"
+    added: "2026-04-17"
 
-# Example:
-#
-# formulas:
-#   - name: damage_formula
-#     status: active
-#     source: design/gdd/combat.md
-#     referenced_by:
-#       - design/gdd/combat.md
-#       - design/gdd/progression.md   # progression GDD scales attack variable
-#     variables:
-#       - attack
-#       - defense
-#       - crit_chance
-#       - crit_multiplier
-#     output_range: [0, 999]
-#     expression: "max(0, attack - defense) * (1 + crit_chance * crit_multiplier)"
-#     notes: "Output feeds into health-system damage intake. Min is 0 (armour
-#       can absorb all damage). Max is uncapped in formula but tuning knob
-#       damage_cap in combat.md clamps at 999."
-#     added: 2026-03-26
-#     revised: ""
+  - name: sync_multiplier
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+    variables:
+      - combo_count
+    expression: "min(1.0 + combo_count * 0.05, 4.0)"
+    output_range: [1.0, 4.0]
+    output_unit: multiplier
+    notes: "同步连击伤害倍率，上限60连击（4.0x）。高于solo的4.0x上限体现协作奖励。"
+    added: "2026-04-17"
 
+  - name: combo_window_decay
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+    variables:
+      - time_since_last_hit
+      - COMBO_WINDOW_DURATION
+    expression: "combo_resets = (time_since_last_hit >= COMBO_WINDOW_DURATION)"
+    output_range: "[bool]"
+    output_unit: boolean
+    notes: "连击窗口计时器，超时则combo_count重置为0。真实秒数，不受hitstop影响。"
+    added: "2026-04-17"
 
-# ─── CONSTANTS ───────────────────────────────────────────────────────────────
+  - name: sync_detection
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+    variables:
+      - P1_hit_frame
+      - P2_hit_frame
+      - SYNC_WINDOW
+    expression: "is_sync = (abs(P1_hit_frame - P2_hit_frame) <= SYNC_WINDOW)"
+    output_range: "[bool]"
+    output_unit: boolean
+    notes: "P1和P2在5帧窗口内命中即为SYNC。"
+    added: "2026-04-17"
+
+  - name: damage_formula
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+    variables:
+      - base_damage
+      - attack_type_multiplier
+      - combo_multiplier
+    expression: "final_damage = base_damage * attack_type_multiplier * combo_multiplier"
+    output_range: [6, 120]
+    output_unit: damage
+    notes: "战斗系统伤害公式。combo_multiplier来自ComboSystem的get_combo_multiplier()方法。"
+    added: "2026-04-17"
+
+  - name: hitstop_frames
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+    variables:
+      - attack_type
+      - target_type
+    expression: "hitstop_frames = base_hitstop[attack_type] + bonus_hitstop[target_type]"
+    output_range: [3, 14]
+    output_unit: frames
+    notes: "LIGHT=3帧，MEDIUM=5帧，HEAVY=8帧，SPECIAL=12帧；Boss被命中额外+2帧。"
+    added: "2026-04-17"
+
+  - name: boss_max_hp
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+      - design/gdd/boss-ai-system.md
+    variables:
+      - BASE_BOSS_HP
+      - progression_multiplier
+      - boss_index_multiplier
+      - coop_scaling
+    expression: "floor(BASE_BOSS_HP * progression_multiplier * boss_index_multiplier * coop_scaling)"
+    output_range: [750, 3000]
+    output_unit: HP
+    notes: "Boss最大HP。BASE_BOSS_HP=500，coop_scaling=1.5（双人）。"
+    added: "2026-04-17"
+
+  - name: boss_phase_hp
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+    variables:
+      - hp_ratio
+    expression: "current_phase = 1 if hp_ratio > 0.60 else 2 if hp_ratio > 0.30 else 3"
+    output_range: "[1, 2, 3]"
+    output_unit: phase_index
+    notes: "Phase 1: 100%-60% HP, Phase 2: 60%-30%, Phase 3: 30%-0%。"
+    added: "2026-04-17"
+
+  - name: trauma_shake_offset
+    status: active
+    source: design/gdd/camera-system.md
+    referenced_by:
+      - design/gdd/camera-system.md
+    variables:
+      - trauma
+      - max_offset
+    expression: "shake_offset = trauma * trauma * max_offset"
+    output_range: "[0, max_offset]"
+    output_unit: pixels
+    notes: "二次方衰减曲线，快攻慢衰减。trauma范围0.0-1.0，max_offset=(50, 35)px。"
+    added: "2026-04-17"
+
+  - name: effective_zoom
+    status: active
+    source: design/gdd/camera-system.md
+    referenced_by:
+      - design/gdd/camera-system.md
+    variables:
+      - BASE_ZOOM
+      - player_distance_zoom
+      - combat_state_zoom
+      - boss_phase_zoom
+    expression: "BASE_ZOOM × player_distance_zoom × combat_state_zoom × boss_phase_zoom"
+    output_range: [0.7, 1.0]
+    output_unit: zoom_factor
+    notes: "玩家距离<200px→1.0x, 200-400px→0.85x, >400px→0.7x。"
+    added: "2026-04-17"
+
+  - name: rescue_timer
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+    variables:
+      - time_since_down
+      - RESCUE_WINDOW
+    expression: "player_out = (RESCUE_WINDOW - time_since_down <= 0.0)"
+    output_range: "[bool]"
+    output_unit: boolean
+    notes: "RESCUE_WINDOW=3.0秒，超时则玩家OUT。"
+    added: "2026-04-17"
+
+  - name: crisis_detection
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+    variables:
+      - P1_hp
+      - P2_hp
+      - PLAYER_MAX_HP
+      - CRISIS_HP_THRESHOLD
+    expression: "is_crisis = (P1_hp < PLAYER_MAX_HP * 0.30) AND (P2_hp < PLAYER_MAX_HP * 0.30)"
+    output_range: "[bool]"
+    output_unit: boolean
+    notes: "双玩家HP均低于30%时触发CRISIS状态。"
+    added: "2026-04-17"
+
+  - name: coop_damage_bonus
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/combat-system.md
+    variables:
+      - base_damage
+      - attack_type_multiplier
+      - combo_multiplier
+      - COOP_BONUS
+    expression: "effective_damage = base_damage * attack_type_multiplier * (1.0 + combo_multiplier) * (1.0 + COOP_BONUS)"
+    output_range: "[10.56, 220]"
+    output_unit: damage
+    notes: "COOP_BONUS=0.10（+10%），双玩家均存活时生效。attack_type_multiplier来自战斗系统。# was: base_damage * (1.0 + combo_multiplier) * (1.0 + COOP_BONUS) — attack_type_multiplier was missing before 2026-04-17"
+    added: "2026-04-17"
+    revised: "2026-04-17"
+
+  - name: solo_damage_reduction
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+    variables:
+      - incoming_damage
+      - SOLO_DAMAGE_REDUCTION
+    expression: "effective_damage = incoming_damage * (1.0 - SOLO_DAMAGE_REDUCTION)"
+    output_range: "[0.75, 1.0] × incoming"
+    output_unit: damage
+    notes: "SOLO_DAMAGE_REDUCTION=0.25（25%减免），单人时生效。与CRISIS不叠加。"
+    added: "2026-04-17"
+
+  - name: compression_speed
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+    variables:
+      - BASE_COMPRESSION_SPEED
+      - phase_multiplier
+      - rescue_multiplier
+      - crisis_multiplier
+    expression: "BASE_COMPRESSION_SPEED * phase_multiplier * rescue_multiplier * crisis_multiplier"
+    output_range: [16, 64]
+    output_unit: px/s
+    notes: "BASE=32px/s。Phase 1=1.0x, Phase2=1.5x, Phase3=2.0x。救援时×0.5，CRISIS时×1.2。"
+    added: "2026-04-17"
+
+  - name: combo_tier_threshold
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/ui-system.md
+    variables:
+      - combo_count
+    expression: "tier = 0 if combo==0 else 1 if <=9 else 2 if <=19 else 3 if <=39 else 4"
+    output_range: [0, 4]
+    output_unit: tier_index
+    notes: "Tier 0=IDLE, 1=1-9, 2=10-19, 3=20-39, 4=40+。"
+    added: "2026-04-17"
+
+# ─── CONSTANTS ────────────────────────────────────────────────────────────────
 # Named numerical values referenced across multiple systems.
-# Register a constant when it is defined in one GDD but another GDD must
-# agree with it (e.g., gold carry limit defined in economy but checked in
-# inventory, or base inventory slots defined in inventory but displayed in HUD).
-#
-# Required fields: name, status, source, referenced_by, value, unit, added
 
-constants: []
+constants:
+  - name: COMBO_WINDOW_DURATION
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/combat-system.md
+    value: 1.5
+    unit: seconds
+    notes: "连击窗口超时时间，超时则连击重置。不受hitstop影响。"
+    added: "2026-04-17"
 
-# Example:
-#
-# constants:
-#   - name: gold_carry_limit
-#     status: active
-#     source: design/gdd/economy.md
-#     referenced_by:
-#       - design/gdd/economy.md
-#       - design/gdd/inventory.md   # inventory enforces the carry limit
-#       - design/gdd/ui.md          # HUD displays current gold vs limit
-#     value: 9999
-#     unit: gold
-#     added: 2026-03-26
-#     revised: ""
-#
-#   - name: base_inventory_slots
-#     status: active
-#     source: design/gdd/inventory.md
-#     referenced_by:
-#       - design/gdd/inventory.md
-#       - design/gdd/progression.md  # progression unlocks additional slots
-#     value: 20
-#     unit: slots
-#     added: 2026-03-26
-#     revised: ""
+  - name: SYNC_WINDOW
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/animation-system.md
+    value: 5
+    unit: frames
+    notes: "同步命中检测窗口，5帧内双方命中即为SYNC。约83ms@60fps。"
+    added: "2026-04-17"
+
+  - name: SYNC_CHAIN_THRESHOLD
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+    value: 3
+    unit: consecutive_sync_hits
+    notes: "3次连续SYNC命中触发Sync Burst视觉爆发。"
+    added: "2026-04-17"
+
+  - name: DODGE_DURATION
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+      - design/gdd/animation-system.md
+    value: 12
+    unit: frames
+    notes: "闪避无敌持续时间。约200ms@60fps。"
+    added: "2026-04-17"
+
+  - name: DODGE_COOLDOWN
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+    value: 24
+    unit: frames
+    notes: "闪避冷却时间。约400ms@60fps。"
+    added: "2026-04-17"
+
+  - name: RESCUE_WINDOW
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/ui-system.md
+      - design/gdd/animation-system.md
+    value: 3.0
+    unit: seconds
+    notes: "倒地玩家可被救援的时间窗口。超时则OUT。"
+    added: "2026-04-17"
+
+  - name: RESCUE_RANGE
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+    value: 175
+    unit: pixels
+    notes: "救援触发距离。150-200px可调，默认175px（含边界）。"
+    added: "2026-04-17"
+
+  - name: RESCUED_IFRAMES_DURATION
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/animation-system.md
+    value: 1.5
+    unit: seconds
+    notes: "被救玩家无敌时间。约90帧@60fps。"
+    added: "2026-04-17"
+
+  - name: PLAYER_MAX_HP
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/ui-system.md
+    value: 100
+    unit: HP
+    notes: "每位玩家的最大HP。"
+    added: "2026-04-17"
+
+  - name: CRISIS_HP_THRESHOLD
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/camera-system.md
+    value: 0.30
+    unit: HP_ratio
+    notes: "双玩家均低于此HP比例时触发CRISIS状态。"
+    added: "2026-04-17"
+
+  - name: COOP_BONUS
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/combat-system.md
+    value: 0.10
+    unit: multiplier
+    notes: "双人均存活时伤害+10%。"
+    added: "2026-04-17"
+
+  - name: SOLO_DAMAGE_REDUCTION
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+    value: 0.25
+    unit: damage_reduction
+    notes: "单人时伤害减免25%。"
+    added: "2026-04-17"
+
+  - name: CRISIS_DAMAGE_REDUCTION
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+    value: 0.25
+    unit: damage_reduction
+    notes: "CRISIS状态时伤害减免25%。与SOLO不叠加。"
+    added: "2026-04-17"
+
+  - name: PHASE_2_THRESHOLD
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+      - design/gdd/ui-system.md
+    value: 0.60
+    unit: HP_ratio
+    notes: "Boss HP低于此比例进入Phase 2。"
+    added: "2026-04-17"
+
+  - name: PHASE_3_THRESHOLD
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+      - design/gdd/ui-system.md
+    value: 0.30
+    unit: HP_ratio
+    notes: "Boss HP低于此比例进入Phase 3。"
+    added: "2026-04-17"
+
+  - name: BASE_BOSS_HP
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+      - design/gdd/boss-ai-system.md
+    value: 500
+    unit: HP
+    notes: "第一个Boss的基准HP。后续Boss按boss_index_multiplier缩放。"
+    added: "2026-04-17"
+
+  - name: COMBO_DAMAGE_INCREMENT
+    status: active
+    source: design/gdd/combat-system.md
+    referenced_by:
+      - design/gdd/combat-system.md
+      - design/gdd/combo-system.md
+    value: 0.05
+    unit: multiplier_per_combo
+    notes: "每连击+5%伤害。即combo_count×0.05。"
+    added: "2026-04-17"
+
+  - name: SOLO_MAX_MULTIPLIER
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+    value: 3.0
+    unit: multiplier
+    notes: "单人连击最高倍率，40连击时达到。"
+    added: "2026-04-17"
+
+  - name: SYNC_MAX_MULTIPLIER
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+    value: 4.0
+    unit: multiplier
+    notes: "同步连击最高倍率，60连击时达到。"
+    added: "2026-04-17"
+
+  - name: MAX_COMBO_COUNT_DISPLAY
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+      - design/gdd/ui-system.md
+    value: 99
+    unit: count
+    notes: "连击显示上限。超过99显示99+。"
+    added: "2026-04-17"
+
+  - name: COMBO_TIER_2_THRESHOLD
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+    value: 10
+    unit: combo_count
+    notes: "进入Tier 2（Rising）的连击数。"
+    added: "2026-04-17"
+
+  - name: COMBO_TIER_3_THRESHOLD
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+    value: 20
+    unit: combo_count
+    notes: "进入Tier 3（Intense）的连击数。"
+    added: "2026-04-17"
+
+  - name: COMBO_TIER_4_THRESHOLD
+    status: active
+    source: design/gdd/combo-system.md
+    referenced_by:
+      - design/gdd/combo-system.md
+    value: 40
+    unit: combo_count
+    notes: "进入Tier 4（Overdrive）的连击数。"
+    added: "2026-04-17"
+
+  - name: DEAD_ZONE_THRESHOLD
+    status: active
+    source: design/gdd/input-system.md
+    referenced_by:
+      - design/gdd/input-system.md
+    value: 0.15
+    unit: analog_input_range
+    notes: "手柄摇杆死区，低于此值视为0。"
+    added: "2026-04-17"
+
+  - name: INPUT_BUFFER_DURATION
+    status: active
+    source: design/gdd/input-system.md
+    referenced_by:
+      - design/gdd/input-system.md
+    value: 100
+    unit: milliseconds
+    notes: "输入缓冲窗口。允许提前按键。"
+    added: "2026-04-17"
+
+  - name: INPUT_BUFFER_MAX_SIZE
+    status: active
+    source: design/gdd/input-system.md
+    referenced_by:
+      - design/gdd/input-system.md
+    value: 10
+    unit: inputs
+    notes: "最大缓冲输入数量。超出则丢弃最旧的。"
+    added: "2026-04-17"
+
+  - name: BASE_ZOOM
+    status: active
+    source: design/gdd/camera-system.md
+    referenced_by:
+      - design/gdd/camera-system.md
+    value: 1.0
+    unit: zoom_factor
+    notes: "相机基础缩放。"
+    added: "2026-04-17"
+
+  - name: PLAYER_DIST_THRESHOLD_LOW
+    status: active
+    source: design/gdd/camera-system.md
+    referenced_by:
+      - design/gdd/camera-system.md
+    value: 200
+    unit: pixels
+    notes: "玩家距离触发轻微缩放的阈值。"
+    added: "2026-04-17"
+
+  - name: PLAYER_DIST_THRESHOLD_HIGH
+    status: active
+    source: design/gdd/camera-system.md
+    referenced_by:
+      - design/gdd/camera-system.md
+    value: 400
+    unit: pixels
+    notes: "玩家距离触发最大缩放的阈值。"
+    added: "2026-04-17"
+
+  - name: TRAUMA_DECAY
+    status: active
+    source: design/gdd/camera-system.md
+    referenced_by:
+      - design/gdd/camera-system.md
+    value: 2.0
+    unit: trauma_per_second
+    notes: "屏幕震动创伤衰减率。"
+    added: "2026-04-17"
+
+  - name: MERCY_ZONE
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+    value: 100
+    unit: pixels
+    notes: "救援减速的边界区。玩家在此区域内不触发减速。"
+    added: "2026-04-17"
+
+  - name: MIN_ATTACK_INTERVAL
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+    value: 1.5
+    unit: seconds
+    notes: "Boss正面攻击最小间隔。"
+    added: "2026-04-17"
+
+  - name: COMPRESSION_DAMAGE_RATE
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+    value: 5
+    unit: HP_per_second
+    notes: "危险区域持续伤害。玩家在危险区域内每秒扣5HP。"
+    added: "2026-04-17"
+
+  - name: BASE_COMPRESSION_SPEED
+    status: active
+    source: design/gdd/boss-ai-system.md
+    referenced_by:
+      - design/gdd/boss-ai-system.md
+    value: 32
+    unit: px_per_second
+    notes: "Deadline Boss压迫墙基础速度。"
+    added: "2026-04-17"
+
+  - name: MAX_SHAKE_OFFSET
+    status: active
+    source: design/gdd/camera-system.md
+    referenced_by:
+      - design/gdd/camera-system.md
+    value: [50, 35]
+    unit: pixels
+    notes: "最大震动幅度（水平，垂直）。"
+    added: "2026-04-17"
+
+  - name: PLAYER_Z_BASE
+    status: active
+    source: design/gdd/animation-system.md
+    referenced_by:
+      - design/gdd/animation-system.md
+    value: 20
+    unit: z_order
+    notes: "玩家精灵基础Z值。"
+    added: "2026-04-17"
+
+  - name: BOSS_Z_BASE
+    status: active
+    source: design/gdd/animation-system.md
+    referenced_by:
+      - design/gdd/animation-system.md
+    value: 0
+    unit: z_order
+    notes: "Boss精灵基础Z值。"
+    added: "2026-04-17"
+
+  - name: SYNC_OVERLAY_Z
+    status: active
+    source: design/gdd/animation-system.md
+    referenced_by:
+      - design/gdd/animation-system.md
+    value: 100
+    unit: z_order
+    notes: "同步攻击特效层级（屏幕空间）。"
+    added: "2026-04-17"
+
+  - name: MAX_PARTICLES
+    status: active
+    source: design/gdd/particle-vfx-system.md
+    referenced_by:
+      - design/gdd/particle-vfx-system.md
+    value: 300
+    unit: particles
+    notes: "最大并发粒子数（性能预算）。"
+    added: "2026-04-17"
+
+  - name: MAX_EMITTERS
+    status: active
+    source: design/gdd/particle-vfx-system.md
+    referenced_by:
+      - design/gdd/particle-vfx-system.md
+    value: 15
+    unit: emitters
+    notes: "最大并发emitter数（性能预算）。"
+    added: "2026-04-17"
+
+  - name: MAX_POOL_EMITTERS
+    status: active
+    source: design/gdd/particle-vfx-system.md
+    referenced_by:
+      - design/gdd/particle-vfx-system.md
+    value: 20
+    unit: emitters
+    notes: "VFX emitter池预分配大小。"
+    added: "2026-04-17"
+
+  - name: VFX_Z_BASE
+    status: active
+    source: design/gdd/particle-vfx-system.md
+    referenced_by:
+      - design/gdd/particle-vfx-system.md
+    value: 200
+    unit: z_order
+    notes: "VFX基础Z值（在角色上方）。"
+    added: "2026-04-17"
+
+  - name: RESCUE_EXECUTE_FRAMES
+    status: active
+    source: design/gdd/animation-system.md
+    referenced_by:
+      - design/gdd/animation-system.md
+      - design/gdd/coop-system.md
+    value: 12
+    unit: frames
+    notes: "救援伸手动画帧数。"
+    added: "2026-04-17"
+
+  - name: RESCUE_REVIVE_FRAMES
+    status: active
+    source: design/gdd/animation-system.md
+    referenced_by:
+      - design/gdd/animation-system.md
+      - design/gdd/coop-system.md
+    value: 18
+    unit: frames
+    notes: "救援拉起动画帧数。"
+    added: "2026-04-17"
+
+  - name: DOWN_TIME_LOOP_FRAMES
+    status: active
+    source: design/gdd/animation-system.md
+    referenced_by:
+      - design/gdd/animation-system.md
+      - design/gdd/coop-system.md
+    value: 180
+    unit: frames
+    notes: "倒地循环动画帧数（3.0s）。匹配RESCUE_WINDOW。"
+    added: "2026-04-17"
+
+  - name: RESCUED_IFRAMES_FRAMES
+    status: active
+    source: design/gdd/animation-system.md
+    referenced_by:
+      - design/gdd/animation-system.md
+      - design/gdd/coop-system.md
+    value: 90
+    unit: frames
+    notes: "被救后无敌帧数（1.5s）。"
+    added: "2026-04-17"
+
+# ─── COLORS ───────────────────────────────────────────────────────────────────
+# Semantic color assignments (game-wide palette)
+
+colors:
+  - name: P1_PRIMARY
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/combat-system.md
+      - design/gdd/combo-system.md
+      - design/gdd/ui-system.md
+      - design/gdd/particle-vfx-system.md
+      - design/gdd/animation-system.md
+    value: "#F5A623"
+    unit: hex_color
+    color_name: "晨曦橙"
+    notes: "P1角色主色。HP条/VFX/连击显示均用此色。"
+    added: "2026-04-17"
+
+  - name: P2_PRIMARY
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/combat-system.md
+      - design/gdd/combo-system.md
+      - design/gdd/ui-system.md
+      - design/gdd/particle-vfx-system.md
+      - design/gdd/animation-system.md
+    value: "#4ECDC4"
+    unit: hex_color
+    color_name: "梦境蓝"
+    notes: "P2角色主色。"
+    added: "2026-04-17"
+
+  - name: GOLD_SPARK
+    status: active
+    source: design/gdd/particle-vfx-system.md
+    referenced_by:
+      - design/gdd/particle-vfx-system.md
+      - design/gdd/combo-system.md
+    value: "#FFD700"
+    unit: hex_color
+    color_name: "打勾金"
+    notes: "Tier 4连击金色粒子。"
+    added: "2026-04-17"
+
+  - name: CRISIS_BLEND
+    status: active
+    source: design/gdd/coop-system.md
+    referenced_by:
+      - design/gdd/coop-system.md
+      - design/gdd/ui-system.md
+    value: "#7F96A6"
+    unit: hex_color
+    color_name: "危机混色"
+    notes: "P1+P2中间色。CRISIS状态屏幕边缘光晕。"
+    added: "2026-04-17"
+
+  - name: OUTLINE_BROWN
+    status: active
+    source: design/gdd/particle-vfx-system.md
+    referenced_by:
+      - design/gdd/particle-vfx-system.md
+    value: "#3D2914"
+    unit: hex_color
+    color_name: "勾线棕"
+    notes: "粒子描边色。"
+    added: "2026-04-17"
+
+  - name: BOSS_PHASE1_COLOR
+    status: active
+    source: design/gdd/ui-system.md
+    referenced_by:
+      - design/gdd/ui-system.md
+    value: "#6B7B8C"
+    unit: hex_color
+    color_name: "Boss相1色"
+    notes: "Boss血条Phase 1颜色（蓝灰）。"
+    added: "2026-04-17"
+
+  - name: BOSS_PHASE2_COLOR
+    status: active
+    source: design/gdd/ui-system.md
+    referenced_by:
+      - design/gdd/ui-system.md
+    value: "#D4A017"
+    unit: hex_color
+    color_name: "Boss相2色"
+    notes: "Boss血条Phase 2颜色（琥珀警告）。"
+    added: "2026-04-17"
+
+  - name: BOSS_PHASE3_COLOR
+    status: active
+    source: design/gdd/ui-system.md
+    referenced_by:
+      - design/gdd/ui-system.md
+    value: "#E85D3B"
+    unit: hex_color
+    color_name: "Boss相3色"
+    notes: "Boss血条Phase 3颜色（紧急红橙）。"
+    added: "2026-04-17"

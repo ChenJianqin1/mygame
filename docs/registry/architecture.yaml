@@ -43,9 +43,29 @@ last_updated: ""
 # interface: how other systems access this state (read-only property, method call,
 #   signal, shared resource, etc.) — this is the contract other ADRs depend on.
 
-state_ownership: []
+state_ownership:
+  - state: player_combat_state
+    status: active
+    owner_system: combat-system
+    adr: docs/architecture/adr-0003-combat-state-machine.md
+    interface: "CombatManager.get_player_state(player_id: int) -> String"
+    write_access: combat-system-only
+    referenced_by:
+- docs/architecture/adr-0003-combat-state-machine.md
+      - docs/architecture/adr-0005-coop-system.md
+      - docs/architecture/adr-0008-camera-system.md
+    added: 2026-04-17
+    revised: ""
 
-# Example:
+  - state: player_combo_state
+    status: active
+    owner_system: combo-system
+    adr: docs/architecture/adr-0004-combo-system-data-structures.md
+    interface: "ComboManager.get_combo_tier(player_id: int) -> int, get_combo_multiplier(player_id: int, is_sync: bool) -> float"
+    write_access: combo-system-only
+    referenced_by:
+      - docs/architecture/adr-0004-combo-system-data-structures.md
+      - docs/architecture
 #
 # state_ownership:
 #   - state: player_health
@@ -71,7 +91,70 @@ state_ownership: []
 #
 # pattern options: signal | direct_call | event_bus | shared_resource | rpc | none
 
-interfaces: []
+interfaces:
+  - contract: signal_bus_routing
+    status: active
+    pattern: event_bus
+    description: "All cross-system signals route through Events Autoload singleton. Exceptions are documented in the ADR."
+    producer_rule: "Emit signal via Events.<signal_name>.emit()"
+    consumer_rule: "Connect in _ready() via Events.<signal_name>.connect(callable)"
+    exceptions:
+      - signal: hit_landed
+        route: direct
+        reason: "High-frequency, low-latency requirement for VFX hit feedback"
+        producer: combat-system
+        consumer: vfx-manager
+    adr: docs/architecture/adr-0001-events-autoload.md
+    referenced_by:
+      - docs/architecture/adr-0001-events-autoload.md
+      - docs/architecture/adr-0002-collision-detection.md
+      - docs/architecture/adr-0003-combat-state-machine.md
+      - docs/architecture/adr-0004-combo-system.md
+      - docs/architecture/adr-0005-coop-system.md
+    added: 2026-04-17
+    revised: ""
+
+  - contract: no_circular_signal_dependencies
+    status: active
+    pattern: forbidden
+    description: "Systems must not form circular signal dependencies where A emits a signal that B consumes, while B also emits a signal that A consumes."
+    adr: docs/architecture/adr-0001-events-autoload.md
+    referenced_by:
+      - docs/architecture/adr-0001-events-autoload.md
+    added: 2026-04-17
+    revised: ""
+
+  - contract: ai_sensor_routing
+    status: active
+    pattern: direct_call
+    description: "Boss AI perception signals (player_detected, player_lost, player_hurt) route directly from CollisionManager to BossAI, not via Events."
+    producer: collision-detection-system
+    consumers:
+      - boss-ai-system
+    signal_signature: "player_detected(player: Node2D), player_lost(player: Node2D), player_hurt(player: Node2D, damage: float)"
+    reason: "AI perception requires lowest possible latency; direct routing avoids Events dispatch overhead"
+    adr: docs/architecture/adr-0002-collision-detection.md
+    referenced_by:
+      - docs/architecture/adr-0002-collision-detection.md
+      - docs/architecture/adr-0006-boss-ai.md
+    added: 2026-04-17
+    revised: ""
+
+  - contract: combo_hit_signal
+    status: active
+    pattern: event_bus
+    description: "CombatSystem emits combo_hit to Events, Events routes to ComboSystem."
+    producer: combat-system
+    consumers:
+      - combo-system
+    signal_signature: "combo_hit(attack_type: String, combo_count: int, is_grounded: bool)"
+    reason: "Cross-system notification of combat hits for combo tracking"
+    adr: docs/architecture/adr-0003-combat-state-machine.md
+    referenced_by:
+      - docs/architecture/adr-0003-combat-state-machine.md
+      - docs/architecture/adr-0004-combo-system.md
+    added: 2026-04-17
+    revised: ""
 
 # Example:
 #
@@ -100,7 +183,111 @@ interfaces: []
 # Register a budget when an ADR explicitly claims a frame time allocation.
 # The registry lets /architecture-review verify the total doesn't exceed the target.
 
-performance_budgets: []
+performance_budgets:
+  - system: collision-detection
+    status: active
+    budget_ms: 0.15
+    max_concurrent_hitboxes: 13
+    adr: docs/architecture/adr-0002-collision-detection.md
+    notes: "13 concurrent Area2D hitboxes at 60fps; 0.13ms measured on test hardware"
+    referenced_by:
+      - docs/architecture/adr-0002-collision-detection.md
+    added: 2026-04-17
+    revised: ""
+
+  - system: combat
+    status: active
+    budget_ms: 2.0
+    adr: docs/architecture/adr-0003-combat-state-machine.md
+    notes: "Includes damage calculation, state machine transitions, and signal emissions"
+    referenced_by:
+      - docs/architecture/adr-0003-combat-state-machine.md
+      - docs/architecture/adr-0004-combo-system-data-structures.md
+    added: 2026-04-17
+    revised: ""
+
+  - system: combo
+    status: active
+    budget_ms: 0.05
+    adr: docs/architecture/adr-0004-combo-system-data-structures.md
+    notes: "TierLogic static calculations, 2x ComboData updates per frame"
+    referenced_by:
+      - docs/architecture/adr-0004-combo-system-data-structures.md
+    added: 2026-04-17
+    revised: ""
+
+  - system: coop
+    status: active
+    budget_ms: 0.05
+    adr: docs/architecture/adr-0005-coop-system.md
+    notes: "CoopManager: 2x PlayerCoopState, timers per frame"
+    referenced_by:
+      - docs/architecture/adr-0005-coop-system.md
+      - docs/architecture/adr-0006-boss-ai.md
+    added: 2026-04-17
+    revised: ""
+
+  - system: boss-ai
+    status: active
+    budget_ms: 0.15
+    adr: docs/architecture/adr-0006-boss-ai.md
+    notes: "Compression update + attack selection per frame"
+    referenced_by:
+      - docs/architecture/adr-0006-boss-ai.md
+    added: 2026-04-17
+    revised: ""
+
+  - system: camera
+    status: active
+    budget_ms: 0.01
+    adr: docs/architecture/adr-0007-camera-system.md
+    notes: "Trauma shake + dual-player tracking, negligible CPU"
+    referenced_by:
+      - docs/architecture/adr-0007-camera-system.md
+      - docs/architecture/adr-0008-vfx-system.md
+    added: 2026-04-17
+    revised: ""
+
+  - system: vfx
+    status: active
+    budget_ms: 2.0
+    adr: docs/architecture/adr-0008-vfx-system.md
+    notes: "300 particles / 15 emitters, pool pre-allocated"
+    referenced_by:
+      - docs/architecture/adr-0008-vfx-system.md
+    added: 2026-04-17
+    revised: ""
+
+  - system: ui
+    status: active
+    budget_ms: 0.5
+    adr: docs/architecture/adr-0009-ui-system.md
+    notes: "Signal-driven updates, CanvasLayer rendering"
+    referenced_by:
+      - docs/architecture/adr-0009-ui-system.md
+      - docs/architecture/adr-0010-animation-system.md
+    added: 2026-04-17
+    revised: ""
+
+  - system: animation
+    status: active
+    budget_ms: 0.1
+    adr: docs/architecture/adr-0010-animation-system.md
+    notes: "AnimationTree blends + frame-locked hitbox"
+    referenced_by:
+      - docs/architecture/adr-0010-animation-system.md
+    added: 2026-04-17
+    revised: ""
+
+  - system: audio
+    status: active
+    budget_ms: 0.05
+    adr: docs/architecture/adr-0011-audio-system.md
+    notes: "Signal-driven BGM/SFX, dynamic mixing"
+    referenced_by:
+      - docs/architecture/adr-0011-audio-system.md
+    added: 2026-04-17
+    revised: ""
 
 # Example:
 #
@@ -131,7 +318,30 @@ performance_budgets: []
 # Register an API decision when the choice is non-obvious and other ADRs might
 # make a different choice for the same purpose without knowing this was decided.
 
-api_decisions: []
+api_decisions:
+  - purpose: cross_system_signal_routing
+    status: active
+    api: Events Autoload singleton
+    not: Direct Node references between systems
+    not: Hybrid routing (mixed Events + direct)
+    reason: "Central bus provides loose coupling, testability, and observability. Direct node references create tight coupling and fragile dependencies."
+    adr: docs/architecture/adr-0001-events-autoload.md
+    referenced_by:
+      - docs/architecture/adr-0001-events-autoload.md
+    added: 2026-04-17
+    revised: ""
+
+  - purpose: hitbox_hurtbox_collision
+    status: active
+    api: Area2D spawn-in/spawn-out
+    not: CharacterBody + move_and_collide()
+    not: StaticBody + RayCast2D
+    reason: "Area2D provides precise shape-based overlap detection; spawn-in/out matches attack animation timing; pool avoids GC"
+    adr: docs/architecture/adr-0002-collision-detection.md
+    referenced_by:
+      - docs/architecture/adr-0002-collision-detection.md
+    added: 2026-04-17
+    revised: ""
 
 # Example:
 #

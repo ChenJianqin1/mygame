@@ -1,0 +1,56 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Deadline Boss Prototype"
+run/main_scene="res://deadline_boss_main.tscn"
+config/features=PackedStringArray("4.6", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+BossAIManager="*res://../../src/gameplay/ai/boss_ai_manager.gd"
+CameraController="*res://../../src/gameplay/camera/camera_controller.gd"
+ComboManager="*res://../../src/autoload/ComboManager.gd"
+CollisionManager="*res://../../src/autoload/CollisionManager.gd"
+CoopManager="*res://../../src/autoload/CoopManager.gd"
+CombatManager="*res://../../src/autoload/CombatManager.gd"
+Events="*res://../../src/autoload/Events.gd"
+VFXManager="*res://../../src/presentation/vfx/vfx_manager.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[input]
+
+p1_left={ "deadzone": 0.5, "keys": [{"keycode": 65, "echo": false, "pressed": false, "script": null}] }
+p1_right={ "deadzone": 0.5, "keys": [{"keycode": 68, "echo": false, "pressed": false, "script": null}] }
+p1_jump={ "deadzone": 0.5, "keys": [{"keycode": 87, "echo": false, "pressed": false, "script": null}] }
+p1_attack={ "deadzone": 0.5, "keys": [{"keycode": 74, "echo": false, "pressed": false, "script": null}] }
+
+p2_left={ "deadzone": 0.5, "keys": [{"keycode": 4194319, "echo": false, "pressed": false, "script": null}] }
+p2_right={ "deadzone": 0.5, "keys": [{"keycode": 4194321, "echo": false, "pressed": false, "script": null}] }
+p2_jump={ "deadzone": 0.5, "keys": [{"keycode": 4194320, "echo": false, "pressed": false, "script": null}] }
+p2_attack={ "deadzone": 0.5, "keys": [{"keycode": 45, "echo": false, "pressed": false, "script": null}] }
+
+[layer_names]
+
+2d_physics/layer_1="players"
+2d_physics/layer_2="boss"
+2d_physics/layer_3="player_hurtbox"
+2d_physics/layer_4="boss_hitbox"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

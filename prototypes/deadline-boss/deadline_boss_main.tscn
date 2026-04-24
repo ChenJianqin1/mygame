@@ -1,0 +1,185 @@
+[gd_scene load_steps=10 format=3 uid="uid://dl7xv8kq2gx3k"]
+
+[ext_resource type="Script" path="res://deadline_boss_main.gd" id="1_main"]
+[ext_resource type="Script" path="res://player_controller.gd" id="2_player"]
+
+[sub_resource type="RectangleShape2D" id="RigidBody2D_player"]
+size = Vector2(32, 48)
+
+[sub_resource type="RectangleShape2D" id="Area2D_hitbox"]
+size = Vector2(40, 40)
+
+[sub_resource type="RectangleShape2D" id="Area2D_hurtbox"]
+size = Vector2(32, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_boss"]
+size = Vector2(100, 150)
+
+[node name="DeadlineBossMain" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="Players" type="Node2D" parent="."]
+
+[node name="P1" type="CharacterBody2D" parent="Players"]
+position = Vector2(200, 400)
+player_id = 1
+script = ExtResource("2_player")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Players/P1"]
+shape = SubResource("RigidBody2D_player")
+
+[node name="Sprite2D" type="Sprite2D" parent="Players/P1"]
+modulate = Color(0.3, 0.6, 1, 1)
+scale = Vector2(32, 48)
+offset = Vector2(0, -24)
+
+[node name="Hitbox" type="Area2D" parent="Players/P1" groups=["p1_hitbox"]]
+collision_layer = 8
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Players/P1/Hitbox"]
+shape = SubResource("Area2D_hitbox")
+
+[node name="Hurtbox" type="Area2D" parent="Players/P1" groups=["p1_hurtbox"]]
+collision_layer = 4
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Players/P1/Hurtbox"]
+shape = SubResource("Area2D_hurtbox")
+
+[node name="P2" type="CharacterBody2D" parent="Players"]
+position = Vector2(300, 400)
+player_id = 2
+script = ExtResource("2_player")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Players/P2"]
+shape = SubResource("RigidBody2D_player")
+
+[node name="Sprite2D" type="Sprite2D" parent="Players/P2"]
+modulate = Color(1, 0.5, 0.3, 1)
+scale = Vector2(32, 48)
+offset = Vector2(0, -24)
+
+[node name="Hitbox" type="Area2D" parent="Players/P2" groups=["p2_hitbox"]]
+collision_layer = 8
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Players/P2/Hitbox"]
+shape = SubResource("Area2D_hitbox")
+
+[node name="Hurtbox" type="Area2D" parent="Players/P2" groups=["p2_hurtbox"]]
+collision_layer = 4
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Players/P2/Hurtbox"]
+shape = SubResource("Area2D_hurtbox")
+
+[node name="Boss" type="CharacterBody2D" parent="."]
+position = Vector2(900, 400)
+groups=["boss"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boss"]
+shape = SubResource("RectangleShape2D_boss")
+
+[node name="Sprite2D" type="Sprite2D" parent="Boss"]
+modulate = Color(0.9, 0.2, 0.3, 1)
+scale = Vector2(100, 150)
+offset = Vector2(0, -75)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="CompressionWall" type="Node2D" parent="."]
+
+[node name="Line2D" type="Line2D" parent="CompressionWall"]
+default_color = Color(0.9, 0.2, 0.2, 0.8)
+width = 3.0
+points = PackedVector2Array([Vector2(0, 0), Vector2(0, 720)])
+
+[node name="ColorRect" type="ColorRect" parent="CompressionWall"]
+offset_left = -50.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 720.0
+color = Color(0.9, 0.1, 0.1, 0.3)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="BossHPBar" type="ProgressBar" parent="UI"]
+offset_left = 440.0
+offset_top = 20.0
+offset_right = 840.0
+offset_bottom = 50.0
+max_value = 500.0
+value = 500.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="UI/BossHPBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = -1.0
+offset_right = -5.0
+offset_bottom = 1.0
+text = "BOSS HP"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="P1HPBar" type="ProgressBar" parent="UI"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 170.0
+offset_bottom = 50.0
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="P1HPLabel" type="Label" parent="UI"]
+offset_left = 20.0
+offset_top = 55.0
+offset_right = 170.0
+offset_bottom = 80.0
+text = "P1: 100/100"
+
+[node name="P2HPBar" type="ProgressBar" parent="UI"]
+offset_left = 180.0
+offset_top = 20.0
+offset_right = 330.0
+offset_bottom = 50.0
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="P2HPLabel" type="Label" parent="UI"]
+offset_left = 180.0
+offset_top = 55.0
+offset_right = 330.0
+offset_bottom = 80.0
+text = "P2: 100/100"
+
+[node name="PhaseLabel" type="Label" parent="UI"]
+offset_left = 1100.0
+offset_top = 20.0
+offset_right = 1260.0
+offset_bottom = 50.0
+text = "Phase 1"
+horizontal_alignment = 2
+
+[node name="CompressionLabel" type="Label" parent="UI"]
+offset_left = 900.0
+offset_top = 20.0
+offset_right = 1090.0
+offset_bottom = 50.0
+text = "Wall: 0px"
+horizontal_alignment = 2

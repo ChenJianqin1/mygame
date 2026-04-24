@@ -25,32 +25,1603 @@
 # STATUS VALUES: active | deprecated | superseded-by: TR-[system]-NNN
 
 version: 1
-last_updated: ""
+last_updated: "2026-04-17"
 
-requirements: []
+requirements:
+  # ============================================================
+  # INPUT SYSTEM (input) — 10 criteria
+  # ============================================================
+  - id: TR-input-001
+    system: input
+    gdd: design/gdd/input-system.md
+    requirement: "P1 keyboard input responds correctly — WASD moves/jumps P1 as expected"
+    created: "2026-04-17"
+    revised: ""
+    status: active
 
-# --- EXAMPLE ENTRIES (remove when first real entries are added) ---
-#
-# - id: TR-combat-001
-#   system: combat
-#   gdd: design/gdd/combat-system.md
-#   requirement: "Player takes damage from enemies based on attack power minus defence"
-#   created: 2026-03-10
-#   revised: ""
-#   status: active
-#
-# - id: TR-combat-002
-#   system: combat
-#   gdd: design/gdd/combat-system.md
-#   requirement: "Combo window timing is 0.4 seconds between hits"
-#   created: 2026-03-10
-#   revised: "2026-04-01"
-#   status: active
-#
-# - id: TR-combat-003
-#   system: combat
-#   gdd: design/gdd/combat-system.md
-#   requirement: "Old damage formula using raw stats"
-#   created: 2026-03-10
-#   revised: ""
-#   status: superseded-by: TR-combat-001
+  - id: TR-input-002
+    system: input
+    gdd: design/gdd/input-system.md
+    requirement: "P2 keyboard input responds correctly — arrow keys + numpad control P2 as expected"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-input-003
+    system: input
+    gdd: design/gdd/input-system.md
+    requirement: "Gamepad input responds correctly — both P1 and P2 gamepad controls work independently"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-input-004
+    system: input
+    gdd: design/gdd/input-system.md
+    requirement: "Hot-plug device switching — inserting/removing gamepad mid-game triggers automatic switch"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-input-005
+    system: input
+    gdd: design/gdd/input-system.md
+    requirement: "No input conflicts — P1 and P2 can press keys simultaneously without crosstalk"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-input-006
+    system: input
+    gdd: design/gdd/input-system.md
+    requirement: "Input latency < 3 frames — keypress to screen reaction < 50ms at 60fps"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-input-007
+    system: input
+    gdd: design/gdd/input-system.md
+    requirement: "60fps stable — continuous input for 1 minute produces no frame drops"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-input-008
+    system: input
+    gdd: design/gdd/input-system.md
+    requirement: "Focus loss clears input — window blur followed by refocus does not carry over pre-blur input state"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-input-009
+    system: input
+    gdd: design/gdd/input-system.md
+    requirement: "Multi-gamepad detection — 3+ gamepads connected, only first two are used"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-input-010
+    system: input
+    gdd: design/gdd/input-system.md
+    requirement: "Unknown device no-crash — connecting unknown USB device does not crash the game"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  # ============================================================
+  # COLLISION DETECTION SYSTEM (collision) — 31 criteria
+  # ============================================================
+  - id: TR-collision-001
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR1-01: Player and Boss in scene, Boss not attacking — player approaches Boss → Player CharacterBody detects Boss (mask includes BOSS layer)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-002
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR1-02: Player and Boss Hitbox coexist — Boss attacks → Player CharacterBody detects BOSS_HITBOX layer"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-003
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR1-03: P1 Hitbox overlaps P2 CharacterBody — collision frame → P2 has no response (mask excludes PLAYER_HITBOX)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-004
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR1-04: Player on platform — moving toward platform → player is blocked by platform (WORLD layer)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-005
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR2-01: Player initiates LIGHT attack — animation plays to attack frame → Hitbox Area2D created and set to ACTIVE"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-006
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR2-02: Attack animation finishes — animation_finished signal → Hitbox enters DESTROYED state, removed next frame"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-007
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR2-03: PLAYER_HITBOX overlaps BOSS layer — collision detection → hit_confirmed signal fires"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-008
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR2-04: Same Hitbox overlaps Hurtbox for multiple frames — after first frame → no repeated hit trigger"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-009
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR2-06: Player is interrupted — state leaves ATTACKING → all related Hitboxes immediately despawn"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-010
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR2-07: During attack animation — input detected in _process attempting spawn → spawn must not happen in _process, must be animation-driven"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-011
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR3-01: Player standing on solid platform — after move_and_slide() → is_on_floor() returns true"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-012
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR3-02: Player jumps off platform — airborne movement → is_on_floor() returns false"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-013
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR4-01: Boss IDLE, player enters R=256px — distance < 256px → player_detected triggers"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-014
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR4-02: Player already detected, now distant — distance > 307px (1.2R) → after 0.2s delay, player_lost triggers"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-015
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR4-03: Player quickly enters inner circle — distance < 204px (0.8R) → immediately DETECTED"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-016
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "CR4-07: Player behind cover — Boss ALERTED state with occlusion → los_modifier=0.5, detection range halved"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-017
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "F1-01: base_size=(64,64), LIGHT attack, player → calculated size = (38.4, 38.4)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-018
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "F1-02: base_size=(64,64), HEAVY attack, Boss → calculated size = (192, 192)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-019
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "F3-01: base_radius=256px, IDLE state, no occlusion → Boss detection = 192px"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-020
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "F3-02: base_radius=256px, CHASING state → Boss detection = 512px"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-021
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "F4-01: player_count=1, boss_count=1 → calculated max = 12"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-022
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "F4-02: player_count=2, boss_count=1 → calculated max = 16 (exceeds safe range, triggers warning)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-023
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "EC1-01: Combo part 1 and part 2 cover same Hurtbox — each hits separately → both Hitboxes can independently trigger"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-024
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "EC2-01: P1 and P2 hit same Boss simultaneously — same frame → damage stacks"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-025
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "EC2-02: Two attacks hit Boss same frame — hit frame → Hitstop stacks"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-026
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "EC3-01: Hitbox marked DESTROYED at frame N — frame N physics detection → still participates, hit is valid"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-027
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "EC3-02: Frame N DESTROYED detection complete — frame N+1 starts → queue_free() executes"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-028
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "EC4-01: 30/60/120fps execute same movement — physics simulation → consistent results"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-029
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "EC5-01: Player attacked mid-combo, enters HURT — state switch → Hitbox immediately despawns"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-030
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "EC6-04: Player crosses boundary quickly (< debounce) — crossing → no state change triggers"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-collision-031
+    system: collision
+    gdd: design/gdd/collision-detection-system.md
+    requirement: "EC7-01: Animation frame 5 is hit frame — playing to frame 5 → Method Track calls spawn, hit point synchronized with animation"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  # ============================================================
+  # COMBAT SYSTEM (combat) — 20 criteria
+  # ============================================================
+  - id: TR-combat-001
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-DMG-001: IDLE state, base_damage=15 — LIGHT attack hits Boss with no combo → final_damage = 15 * 0.8 = 12"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-002
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-DMG-003: base_damage=15 — HEAVY attack hits → final_damage = 15 * 1.5 = 23"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-003
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-DMG-010: combo_count=0 — calculate combo_multiplier → 1.0"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-004
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-DMG-012: combo_count=40 — calculate combo_multiplier → 3.0 (cap)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-005
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-DMG-020: HEAVY + combo 10 — calculate final_damage → 15 * 1.5 * 1.5 = 34"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-006
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-KB-001: attacker(100,0), target(200,0) — calculate knockback direction → normalize((200-100,0)) = (1,0)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-007
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-KB-010: LIGHT attack, direction(1,0) — calculate knockback_force → 50 * (1,0) = (50, 0)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-008
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-HS-001: attack_type=LIGHT — calculate hitstop_frames → 3 frames"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-009
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-HS-004: attack_type=SPECIAL — calculate hitstop_frames → 12 frames"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-010
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-HS-010: LIGHT hits BOSS — calculate hitstop_frames → 3 + 2 = 5 frames"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-011
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-DEF-001: final_damage=50, defense_rating=0.0 — calculate incoming_damage → 50"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-012
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-DEF-003: final_damage=6, defense_rating=0.8 — calculate incoming_damage → 1 (minimum value protection)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-013
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-DOD-001: Player presses dodge key — triggers DODGING → persists 12 frames then exits"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-014
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-DOD-020: Player in DODGING state — Boss attack hits → player takes no damage"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-015
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-BHP-001: Boss 1, solo — calculate boss_max_hp → floor(500*1.0*1.0*1.0) = 500"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-016
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-BHP-010: Afternoon Boss (index 3) co-op — calculate boss_max_hp → floor(500*1.5*1.6*1.5) = 1800"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-017
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-EDGE-001: final_damage=6, defense=0.8 — calculate incoming_damage → 1 (not 0)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-018
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-EDGE-003: combo_count=100 — calculate combo_multiplier → 3.0 (locked at cap)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-019
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-STATE-001: IDLE — attacked(LIGHT) → transitions to ATTACKING"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combat-020
+    system: combat
+    gdd: design/gdd/combat-system.md
+    requirement: "AC-STATE-003: IDLE — dodged() → transitions to DODGING"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  # ============================================================
+  # COMBO SYSTEM (combo) — 27 criteria
+  # ============================================================
+  - id: TR-combo-001
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-01: Player IDLE, no combo — first hit lands → combo_count=1, timer=0, state=ACTIVE"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-002
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-02: combo_count=5, timer=0.5s — 0.5s passes with no hit → combo_count=0, state=IDLE"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-003
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-03: combo_count=5, timer=1.4s — new hit lands → timer resets to 0, combo_count=6"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-004
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-04: combo_count=20 (solo) — query multiplier → solo_multiplier = 2.0"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-005
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-05: combo_count=40 (solo) — query multiplier → solo_multiplier = 3.0 (cap)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-006
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-06: combo_count=40 (sync) — query multiplier → sync_multiplier = 3.0"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-007
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-07: combo_count=50 (sync) — query multiplier → sync_multiplier = 3.5"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-008
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-08: combo_count=60 (sync) — query multiplier → sync_multiplier = 4.0 (cap)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-009
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-09: P1 hits frame N, P2 hits frame N+3 — sync check → is_sync = TRUE (3 <= 5)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-010
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-10: P1 hits frame N, P2 hits frame N+7 — sync check → is_sync = FALSE (7 > 5)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-011
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-11: 2 consecutive SYNC hits — 3rd SYNC hit lands → sync_burst_triggered signal fires"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-012
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-12: SYNC_BURST active, non-SYNC hit — hit lands → Sync Burst ends, chain resets"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-013
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-13: combo_count=8 — calculate tier → tier=1 (Normal)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-014
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-14: combo_count=15 — calculate tier → tier=2 (Rising)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-015
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-15: combo_count=25 — calculate tier → tier=3 (Intense)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-016
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-16: combo_count=45 — calculate tier → tier=4 (Overdrive)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-017
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-17: combo_count=99 — display shows → '99+'"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-018
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-18: P1 takes damage — P1 combo → unchanged (time-only decay)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-019
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-19: P1 dies — P2 combo → unchanged"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-020
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-20: P2 IDLE, P1 count=20, P2 hits sync — hit lands → P2 gets sync_multiplier, starts from 1"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-021
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-21: Boss defeated — combo state → combo_count persists"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-022
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-22: combo_count=0 — query multiplier → 1.0"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-023
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-23: combo_count=100 — internal count → continues incrementing (display caps at 99)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-024
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-24: Hitstop (5 frames), timer=1.4s — hitstop ends → timer still 1.4s"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-025
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-25: combo_tier changes 2→3 — UI update → combo_tier_changed(3, player_id) fires"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-026
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-26: Sync chain breaks — visual state → sync_chain_active(0) fires"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-combo-027
+    system: combo
+    gdd: design/gdd/combo-system.md
+    requirement: "AC-27: combo_count resets — UI signal → combo_break(player_id) fires"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  # ============================================================
+  # COOP SYSTEM (coop) — 13 criteria
+  # ============================================================
+  - id: TR-coop-001
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-01: P1 at full HP, P2 at full HP — normal play → COOP_BONUS = +10% active"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-002
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-02: P1 hits 0 HP — P1 enters DOWNTIME → rescue timer starts (3s)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-003
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-03: P1 DOWNTIME, P2 approaches within 175px — P2 presses rescue → P1 instantly revives with 1.5s i-frames"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-004
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-04: P1 DOWNTIME, timer reaches 0 — without rescue → P1 is OUT"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-005
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-05: P1 OUT — P2 continues fight → P2 gets SOLO_DAMAGE_REDUCTION = 25%"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-006
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-06: Both players below 30 HP — both below threshold → CRISIS state activates"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-007
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-07: CRISIS active, P1 rescued to 50 HP — P1 >= 30% → CRISIS ends (P2 still <30%)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-008
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-08: Both players hit 0 same frame — simultaneous DOWNTIME → lose a life / game over"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-009
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-09: P1 is DOWNTIME, rescue in progress — Boss attacks P1 → P1 takes damage (vulnerable)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-010
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-10: Rescue window at 0.5s, hitstop starts — hitstop (5 frames) → timer continues, still 0.5s after hitstop"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-011
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-11: P1 at 100 HP, combo=2.0, both alive — query damage → effective_damage = base * 3.0 * 1.10"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-012
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-12: Rescue range = exactly 175px — P2 distance to P1 = 175 → is_in_range = TRUE"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-coop-013
+    system: coop
+    gdd: design/gdd/coop-system.md
+    requirement: "AC-13: Player OUT — next life begins → player returns to ACTIVE state"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  # ============================================================
+  # BOSS AI SYSTEM (boss) — 13 criteria
+  # ============================================================
+  - id: TR-boss-001
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-01: Boss HP = 100% — query phase → current_phase = 1"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-002
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-02: Boss HP = 59% — query phase → current_phase = 2"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-003
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-03: Boss HP = 29% — query phase → current_phase = 3"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-004
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-04: Phase 1 boss — AI selects attack → only Pattern 1 available"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-005
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-05: Phase 2 boss — AI selects attack → Patterns 1 and 2 available"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-006
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-06: Player1 behind MERCY_ZONE — compression check → compression_speed *= 0.6"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-007
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-07: Player1 downed — compression check → compression_speed *= 0.5"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-008
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-08: Both players in CRISIS — compression check → compression_speed *= 1.2"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-009
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-09: Boss HP crosses 60% — during combat → PHASE_CHANGE state entered"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-010
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-10: Boss in HURT state — attack selected → no new attack, blocked"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-011
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-11: Player in danger zone — 1 second passes → takes 5 damage"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-012
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-12: Both players downed — same frame → game over triggered"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-boss-013
+    system: boss
+    gdd: design/gdd/boss-ai-system.md
+    requirement: "AC-13: Boss full HP, MIN_ATTACK_INTERVAL=1.5s — attack cooldown → 2.5s (no floor hit)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  # ============================================================
+  # CAMERA SYSTEM (camera) — 21 criteria
+  # ============================================================
+  - id: TR-camera-001
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-1.1: Single player moving in arena — camera smoothly follows, no jitter or breakup"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-002
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-1.2: Both players moving simultaneously — camera follows both centroids, both always visible"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-003
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-1.3: Both players separated to 400px+ — camera auto-zooms to 0.7x, both players and Boss still visible"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-004
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-2.1: LIGHT attack hit → visible subtle pixel jitter (~2px), lasts ~0.3s then disappears"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-005
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-2.2: HEAVY attack hit → visible clear shake (~5px), lasts ~0.5s then disappears"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-006
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-2.3: Sync attack triggered — orange-blue alternating pulse visual, shake intensity ~0.3, lasts ~0.5s"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-007
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-2.4: Shake ends — camera returns to exact pre-shake position, no drift"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-008
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-3.1: Any player initiates attack → camera immediately enters PLAYER_ATTACK mode, zoom 0.9x, smoothing speed rises to 12.0"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-009
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-3.2: Attack ends — 0.3s later, camera smoothly returns to NORMAL mode"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-010
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-3.3: Combo Tier rises to 3+ → camera enters COMBAT_ZOOM mode, zoom 0.85x"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-011
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-3.4: Combo Tier drops below 3 — 0.3s内平滑返回NORMAL"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-012
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-4.1: Boss attacks (boss_attack_started) → camera enters BOSS_FOCUS mode, zoom 0.8x"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-013
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-4.2: Boss phase transition (HP crosses threshold) → shake 10px + zoom 0.75x + smoothing drops to 4.0 (cinematic), lasts ~1.2s"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-014
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-4.3: Boss at any screen position — always visible (not clipped beyond boundary)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-015
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-5.1: Any player downed → camera immediately enters CRISIS mode, smoothing speed rises to 20.0 (near-instant follow)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-016
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-5.2: Downed player at arena edge — camera boundary constraints pause, downed player remains visible"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-017
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-5.3: Player rescued — 0.5s later, smoothly returns to NORMAL, boundary constraints restore"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-018
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-6.1: P1 left, P2 right, Boss in middle — all three visible simultaneously, no clipping"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-019
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-6.2: P1 attacking — camera weighted toward P1 (P1 weight 1.5, P2 weight 0.8), but P2 still in frame"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-020
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-6.3: Player distance <200px → camera does not zoom in (stays 1.0x), maintains tight composition"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-camera-021
+    system: camera
+    gdd: design/gdd/camera-system.md
+    requirement: "AC-7.1: 3 characters + full-screen shake + full zoom animation — frame rate stable at 60fps"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  # ============================================================
+  # PARTICLE VFX SYSTEM (vfx) — 18 criteria
+  # ============================================================
+  - id: TR-vfx-001
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-01: Signal hit_landed(LIGHT, pos, dir) received — VFXManager emits → hit_vfx fires, 5-8 particles, 360° spread, gravity 400px/s², P1/P2 color"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-002
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-02: Signal hit_landed(SPECIAL, pos, dir) received — VFXManager emits → hit_vfx fires, 30-40 particles, 120° cone, gravity 200px/s², gold sparks"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-003
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-03: Signal combo_tier_escalated(2, player_color) received — VFXManager emits → combo_escalation_vfx fires, 8 burst particles, player_color +20% bright"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-004
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-04: Signal combo_tier_escalated(4, player_color) received — VFXManager emits → combo_escalation_vfx fires, 25 burst particles, gold #FFD700, explosive upward"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-005
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-05: sync_chain_length = 1 — sync_burst_triggered not yet fired → sync_burst_vfx continuous emitter activates (P1+P2 intertwined helical, additive blend)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-006
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-06: 3rd consecutive sync hit — sync_burst_triggered fires → sync_burst_vfx one-shot burst: 50 particles (orange+blue+gold), additive blend"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-007
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-07: sync_chain drops to 0 — chain broken → sync_burst continuous emitter immediately deactivated"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-008
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-08: Signal rescue_triggered(pos, rescuer_color) received — VFXManager emits → rescue_vfx fires, 12-18 particles, upward arc, rescuer_color, hand glow sprite"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-009
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-09: Boss HP = 0 — boss_defeated(pos, type) fires → boss_death_vfx fires, gold confetti rain; all active hit emitters force-cancelled"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-010
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-10: current_particles = 250 (>80% of 300) — new hit_vfx event → new emitter queued (not dropped), FIFO order"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-011
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-11: Queue depth = 10 — new event arrives → oldest queued event dropped, new event enqueued"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-012
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-12: combo tier = 3 — query hit_vfx count → hit_vfx particles × 1.5, gold sparks appear"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-013
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-13: combo tier = 4 — query hit_vfx count → hit_vfx particles × 2.0, gold confetti bonus (30 particles)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-014
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-14: Emitter completes (is_emitting=false, count=0) — checkin → emitter returned to pool, available for next checkout"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-015
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-15: Emitter pool exhausted (20 active) — new event arrives → event queued (max depth 10, FIFO)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-016
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-16: sync_burst P1+P2 overlap — additive blend → orange+blue overlap produces white-yellow glow"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-017
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-17: combo break (tier 4 → tier 2) — combo_tier_escalated(2) fires → tier 4 emitter force-cancelled immediately, no de-escalation animation"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-vfx-018
+    system: vfx
+    gdd: design/gdd/particle-vfx-system.md
+    requirement: "AC-18: sync_burst + rescue same frame at same position — both signals → sync_burst wins, rescue VFX dropped"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  # ============================================================
+  # ANIMATION SYSTEM (anim) — 23 criteria
+  # ============================================================
+  - id: TR-anim-001
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-1.1: Player from IDLE inputs LIGHT attack → animation correctly plays 16 frames (8 anticipation + 2 active + 6 recovery) → returns to IDLE"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-002
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-1.2: Player hurt during anticipation phase → immediately switches to HURT state, attack cancelled"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-003
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-1.3: Player inputs attack during recovery frames → input ignored, animation not interrupted"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-004
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-1.4: MEDIUM attack anticipation can be interrupted by LIGHT attack anticipation (8 frames vs 14 frames), but not during MEDIUM active phase"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-005
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-1.5: BOSS_ATTACK_A playing receives player hit → Boss stays in ATTACK_A state, VULNERABLE not entered during attack"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-006
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-2.1: LIGHT attack hitbox only activates at frames 8-9 (active frames), closes at frame 10+"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-007
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-2.2: HEAVY attack hitbox only activates at frames 20-23 (active frames), closes at frame 24+"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-008
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-2.3: During lag spike, hitbox activation timing synchronizes with visual animation frames, no 'visual not yet hit but damage already triggered'"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-009
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-3.1: P1 and P2 each hit within 5-frame window → sync burst triggered, dual-color particles spiral射出 (orange #F5A623 + blue #4ECDC4)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-010
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-3.2: P1 hits while P2 is in anticipation → P2 shows 'sync charge' glow (dim→strong), if P2 hits within 5 frames burst triggers, if missed glow dissipates"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-011
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-3.3: During sync attack, attack hitbox radius × 1.15 (+15%)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-012
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-4.1: Boss from Phase 1→2 (HP crosses 60%) → BOSS_PHASE_TRANSITION plays 60 frames → enters Phase 2 state machine"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-013
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-4.2: After Boss enters Phase 2, idle animation frame rate increases (20 frames vs 24 frames), VFX adds vertical shake"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-014
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-4.3: Boss enters Phase 3 (HP crosses 30%) → idle animation frame rate continues to increase (16 frames), whole-body shake obvious"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-015
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-4.4: Boss HP at zero → BOSS_DEFEAT plays 90 frames → note explosion particles dominate visual effect"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-016
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-5.1: P1 downed → downtime_loop plays, 180 frames (3.0s) later P1 automatically OUT"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-017
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-5.2: P2 enters RESCUE_RANGE (within 175px of downed P1) and presses rescue → RESCUE_EXECUTE (12 frames) → RESCUE_REVIVE (18 frames) → P1 stands up"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-018
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-5.3: P2 hurt during RESCUE_APPROACH → RESCUE cancelled, P2 enters HURT, P1 continues downtime_loop, timer does not pause"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-019
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-5.4: P2 starts rescue at t=2.5s → 500ms animation sequence completes within RESCUE_WINDOW=3.0s, P1 rescued"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-020
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-5.5: After successful rescue, P1 shows rescued_invincible animation (90 frames, soft pulse glow), full damage reduction during"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-021
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-6.1: All character sprites have paper texture overlay (opacity=0.15), visible micro-jitter (±1.0px, 8Hz)"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-022
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-6.2: Hit frame (active frame) triggers squash/stretch effect, Sprite2D.scale peak = 1.2"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-anim-023
+    system: anim
+    gdd: design/gdd/animation-system.md
+    requirement: "AC-7.1: 3 characters (2 players + Boss) on screen, all animations playing, frame rate stable at 60fps"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  # ============================================================
+  # UI SYSTEM (ui) — 20 criteria
+  # ============================================================
+  - id: TR-ui-001
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-01: P1 HP = 100% — query HP bar → P1 bar shows full, #F5A623 color"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-002
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-02: P1 HP drops to 20% — HP update signal → P1 bar is desaturated, slow pulse"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-003
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-03: P1 HP drops to 8% — HP update signal → P1 bar flashes red tint overlay"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-004
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-04: P1 combo = 25 — query scale → combo counter scale = 1.30x"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-005
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-05: P1 combo = 45, P2 combo = 45 — both hit sync → both counters show gold tint, colors intertwine"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-006
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-06: Sync chain = 3 consecutive — 3rd sync hit → SyncChainIndicator shows 3 filled icons, sync burst triggers"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-007
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-07: P1 downed — player_downed signal → RescueTimer spawns at P1 screen position, radial drain begins"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-008
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-08: RescueTimer counting, rescue occurs — player_rescued signal → timer disappears, sparkle at rescue location"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-009
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-09: RescueTimer counting, timer = 0 — no rescue → timer disappears, ghost icon appears next to P2 HP bar"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-010
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-10: Both players below 30% HP — crisis_state_changed(true) → CrisisEdgeGlow activates, 0.5s on/off pulse begins"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-011
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-11: Either player exits below 30% — crisis_state_changed(false) → CrisisEdgeGlow deactivates immediately"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-012
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-12: Boss HP crosses 60% — boss_phase_changed(2) → BossHPBar shifts to amber #D4A017, 60% notch flashes"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-013
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-13: Boss HP crosses 30% — boss_phase_changed(3) → BossHPBar shifts to urgent red-orange #E85D3B, 30% notch flashes"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-014
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-14: Boss attack telegraph fires — boss_attack_telegraph → center screen shows icon + attack name for 1.0s"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-015
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-15: Boss HP = 0 — Boss DEFEATED → victory animation plays, GAME_OVER overlay if both players OUT"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-016
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-16: Gameplay, pause pressed — pause_input → PauseMenu appears, gameplay freezes"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-017
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-17: Title screen — start_input → transitions to BOSS_INTRO"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-018
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-18: Both players alive — any moment → CoopBonusIndicator glows near both HP bars"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-019
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-19: P1 OUT, P2 alive — P1 player_out → ghost silhouette icon appears next to P2 HP bar"
+    created: "2026-04-17"
+    revised: ""
+    status: active
+
+  - id: TR-ui-020
+    system: ui
+    gdd: design/gdd/ui-system.md
+    requirement: "AC-20: BOSS_INTRO active — 1.5s timer expires → auto-transitions to GAMEPLAY_HUD"
+    created: "2026-04-17"
+    revised: ""
+    status: active

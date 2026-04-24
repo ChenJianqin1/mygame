@@ -602,11 +602,17 @@ create-architecture complete — APPROVED WITH CONDITIONS (TD sign-off 2026-04-1
 - **New URL**: https://github.com/ChenJianqin1/mygame.git
 - **Old repo** (Donchitos/Claude-Code-Game-Studios) deprecated
 
-## Session Extract — 2026-04-24 (S1-S4 fixes + commit)
-### S1-S4 Blocking Issues Fixed
-- S1: Added `attack_hit` signal to CollisionDetection interface definition
-- S2: Already correct (player_hurt was already in interface)
-- S3: Signal routing already correct (ComboManager doesn't re-emit combo_hit); removed duplicate _on_combo_hit handler in boss_ai_manager.gd
+## Session Extract — 2026-04-24 (Godot parse errors found and fixed)
+### Godot 4.6 Parse Errors Found During Verification
+All autoload scripts had `class_name X` conflicting with autoload singleton registration:
+- Removed `class_name` from: Events, CollisionManager, CombatManager, ComboManager, CoopManager, BossAIManager, CameraController, VFXManager
+- Fixed CollisionManager: Node type annotation, Area2D.get() call syntax (Godot 4 doesn't support 2-arg get())
+- Fixed CombatManager: malformed doc comments missing ##
+- Fixed BossAIManager: implemented missing _is_crisis_active() and _is_player_down() functions
+
+### Commits
+- commit 08b7bf9: "fix: resolve class_name conflicts and implement missing boss AI functions"
+- Push to GitHub successful
 - S4: Replaced all `player_revived` → `player_rescued` in camera-system.md (4 locations)
 
 ### Commits

@@ -592,10 +592,15 @@ create-architecture complete — APPROVED WITH CONDITIONS (TD sign-off 2026-04-1
 - [x] All source files implemented (31 .gd files in src/)
 - [x] All stories marked as Done in epic files
 - [x] sprint-status.yaml updated with all 79 stories
-- [x] All code committed to git (commit ea00add)
-- [ ] Push to remote (network issue — retry when online)
-- [ ] Godot verification required (run tests in Godot 4.6)
-- [ ] CI will run tests on push
+- [x] All code committed to git (commits ea00add, 7be02cd)
+- [x] Godot 4.6 installed locally at /d/Godot/
+- [x] Code pushed to GitHub (new repo: ChenJianqin1/mygame)
+- [ ] CI runs GdUnit4 tests (running on push)
+- [ ] Godot verification (pending CI results)
+
+### GitHub Repo
+- **New URL**: https://github.com/ChenJianqin1/mygame.git
+- **Old repo** (Donchitos/Claude-Code-Game-Studios) deprecated
 
 ## Session Extract — 2026-04-24 (S1-S4 fixes + commit)
 ### S1-S4 Blocking Issues Fixed
@@ -604,8 +609,7 @@ create-architecture complete — APPROVED WITH CONDITIONS (TD sign-off 2026-04-1
 - S3: Signal routing already correct (ComboManager doesn't re-emit combo_hit); removed duplicate _on_combo_hit handler in boss_ai_manager.gd
 - S4: Replaced all `player_revived` → `player_rescued` in camera-system.md (4 locations)
 
-### Commit
-- commit ea00add: "feat: initial game implementation — 2D co-op boss rush foundation"
-- 255 files, +47,706 lines
-- Push failed (GitHub SSL/TLS handshake failure — network issue)
-- Retry push when network available
+### Commits
+- commit ea00add: "feat: initial game implementation — 2D co-op boss rush foundation" (255 files, +47,706 lines)
+- commit 7be02cd: "chore: update session state with S1-S4 fixes and commit status"
+- commit 9a5d425: "feat: add project.godot, main.tscn, and GdUnit4 for CI testing"

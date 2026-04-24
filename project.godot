@@ -1,0 +1,45 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Claude Code Game Studios"
+run/main_scene="res://src/presentation/main.tscn"
+config/features=PackedStringArray("4.6", "GL Compatibility")
+
+[autoload]
+
+Events="*res://src/autoload/Events.gd"
+CollisionManager="*res://src/autoload/CollisionManager.gd"
+CombatManager="*res://src/autoload/CombatManager.gd"
+ComboManager="*res://src/autoload/ComboManager.gd"
+CoopManager="*res://src/autoload/CoopManager.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[input]
+
+p1_up={&"w", &"Z"}
+p1_down={&"s", &"X"}
+p1_left={&"a", &"Q"}
+p1_right={&"d"}
+p1_attack={&"j", &"F"}
+p1_special={&"k", &"G"}
+p1_dodge={&"l", &"H"}
+p1_rescue={&"u", &"J"}
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

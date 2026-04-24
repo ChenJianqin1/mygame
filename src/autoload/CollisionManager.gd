@@ -2,7 +2,6 @@
 # Implements ADR-ARCH-002: Area2D Spawn-in/Spawn-out collision detection
 # Layer/Mask configuration will be applied to project.godot separately
 extends Node
-class_name CollisionManager
 
 ## Hitbox pool autoload for the 2D brawler combat system.
 ## Manages spawn/despawn of Area2D hitboxes with a pre-allocated object pool.
@@ -186,7 +185,7 @@ func spawn_hitbox(config: Dictionary) -> Area2D:
 	_active_hitboxes.append(hitbox)
 
 	# Add to scene tree under parent (defaults to root)
-	var parent: Node2D = config.get("parent")
+	var parent: Node = config.get("parent")
 	if parent == null:
 		parent = get_tree().root
 	parent.add_child(hitbox)
@@ -242,8 +241,8 @@ func get_max_concurrent() -> int:
 func _on_hitbox_area_entered(hitbox: Area2D, area: Area2D) -> void:
 	## Route hit events: hitbox → CollisionManager → Events.attack_hit
 	## `hitbox` is passed via bind() so we read properties from the correct object
-	var attack_id_val: int = hitbox.get("attack_id", -1)
-	var is_grounded_val: bool = hitbox.get("is_grounded", true)
+	var attack_id_val: int = hitbox.get("attack_id") as int if hitbox.get("attack_id") != null else -1
+	var is_grounded_val: bool = hitbox.get("is_grounded") as bool if hitbox.get("is_grounded") != null else true
 
 	## Emit hit_confirmed per collision-003 AC-1
 	hit_confirmed.emit(hitbox, area, attack_id_val)
@@ -264,7 +263,7 @@ func _count_hits_for_attack(attack_id: int) -> int:
 	var count := 0
 	for hitbox in _active_hitboxes:
 		if hitbox.get("attack_id") == attack_id:
-			count += hitbox.get("hit_count", 0)
+			count += hitbox.get("hit_count") as int if hitbox.get("hit_count") != null else 0
 	return count
 
 # ─── Boss AI Perception ───────────────────────────────────────────────────────

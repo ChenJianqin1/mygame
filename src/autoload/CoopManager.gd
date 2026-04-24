@@ -1,7 +1,6 @@
 # CoopManager.gd — Autoload singleton for co-op system
 # Implements ADR-ARCH-005: Coop System HP Pools & Rescue
 # Manages dual-player HP pools, rescue mechanics, and co-op state machine
-class_name CoopManager
 extends Node
 
 ## Autoload singleton managing two-player co-op state and HP pools.

@@ -2,12 +2,11 @@
 # Implements damage calculation per ADR-ARCH-003
 # TR-ID: TR-combat-002
 
-class_name CombatManager
 extends Node
 
 ## Description
-Autoload singleton managing combat damage calculations and related signals.
-Handles attack type multipliers, combo multipliers, and damage formulas.
+## Autoload singleton managing combat damage calculations and related signals.
+## Handles attack type multipliers, combo multipliers, and damage formulas.
 
 # ===== TUNING KNOBS =====
 

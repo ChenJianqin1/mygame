@@ -2,7 +2,6 @@
 # Implements camera-001: AC-7.1 (60fps stable), AC-2.4 (no drift)
 # Implements camera-004: Player Attack Zoom Response
 # Uses offset-based shake (not position) per ADR-ARCH-007
-class_name CameraController
 extends Node2D
 
 ## Camera controller with trauma-based screen shake.

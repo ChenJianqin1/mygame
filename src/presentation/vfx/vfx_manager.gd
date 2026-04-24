@@ -1,7 +1,6 @@
 # vfx_manager.gd — Autoload singleton for VFX particle system
 # Implements ADR-ARCH-008: VFX System
 # Manages pre-allocated CPU/GPU particle emitter pools and budget enforcement
-class_name VFXManager
 extends Node
 
 ## Autoload singleton managing VFX particle emitters.

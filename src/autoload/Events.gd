@@ -2,7 +2,6 @@
 # Pure relay, no business logic. All cross-system signals route through here.
 # See ADR-ARCH-001 for full signal directory.
 extends Node
-class_name Events
 
 # Input signals
 signal input_action(player_id: int, action: StringName, strength: float)

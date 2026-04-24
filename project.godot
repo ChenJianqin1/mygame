@@ -21,23 +21,15 @@ CollisionManager="*res://src/autoload/CollisionManager.gd"
 CombatManager="*res://src/autoload/CombatManager.gd"
 ComboManager="*res://src/autoload/ComboManager.gd"
 CoopManager="*res://src/autoload/CoopManager.gd"
+BossAIManager="*res://src/gameplay/ai/boss_ai_manager.gd"
+CameraController="*res://src/gameplay/camera/camera_controller.gd"
+VFXManager="*res://src/presentation/vfx/vfx_manager.gd"
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
-
-[input]
-
-p1_up={&"w", &"Z"}
-p1_down={&"s", &"X"}
-p1_left={&"a", &"Q"}
-p1_right={&"d"}
-p1_attack={&"j", &"F"}
-p1_special={&"k", &"G"}
-p1_dodge={&"l", &"H"}
-p1_rescue={&"u", &"J"}
 
 [rendering]
 

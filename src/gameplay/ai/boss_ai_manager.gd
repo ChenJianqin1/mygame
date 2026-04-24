@@ -1,7 +1,6 @@
 # BossAIManager.gd — Autoload singleton for boss AI system
 # Implements ADR-ARCH-006: Boss AI System
 # Manages boss state machine, phases, attack patterns, and player tracking
-class_name BossAIManager
 extends Node
 
 ## Autoload singleton for the boss AI state machine.
@@ -426,6 +425,17 @@ func _is_player_behind(player_id: int) -> bool:
 	if player_pos == Vector2.ZERO:
 		return false
 	return player_pos.x < _compression_wall_x + MERCY_ZONE
+
+
+## Returns true if crisis state is currently active (both players below 30% HP).
+func _is_crisis_active() -> bool:
+	return CoopManager.is_crisis_active()
+
+
+## Returns true if a player is in DOWNTIME or OUT state.
+func _is_player_down(player_id: int) -> bool:
+	var state: CoopState = CoopManager.get_player_state(player_id)
+	return state == CoopState.DOWNTIME or state == CoopState.OUT
 
 
 ## Returns true if any player is in rescue mode (downed).

@@ -1,7 +1,6 @@
 # ComboManager.gd — Autoload singleton for combo system
 # Implements ADR-ARCH-004: Combo System Data Structures
 # Manages per-player ComboData and sync detection across both players
-class_name ComboManager
 extends Node
 
 ## Autoload singleton coordinating combo state for both players.
